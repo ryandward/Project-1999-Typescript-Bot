@@ -18,9 +18,9 @@ client.on("interactionCreate", async (interaction: Interaction) => {
 
   try {
     if (interaction.isCommand() && command.execute) {
-      await command.execute(interaction);
+      command.execute(interaction);
     } else if (interaction.isAutocomplete() && command.autocomplete) {
-      await command.autocomplete(interaction);
+      command.autocomplete(interaction);
     } else {
       // This else branch might be redundant if the checks above are comprehensive.
       logger.warn(`Handler found for ${interaction.commandName}, but no matching method to execute.`);

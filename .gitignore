@@ -1,0 +1,4 @@
+.env
+*.js
+output/ormconfig.json
+node_modules/

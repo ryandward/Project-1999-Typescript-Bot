@@ -27,11 +27,11 @@ export const BankUtils = {
 
   // Internal helper functions
   async search(itemName: string) {
-    return await this.dbUtils.getRows("bank", "name", itemName);
+    return this.dbUtils.getRows("bank", "name", itemName);
   },
 
   async suggest(partialName: string) {
-    return await this.dbUtils.getSuggestionsAndCount(
+    return this.dbUtils.getSuggestionsAndCount(
       "bank",
       "name",
       partialName
@@ -56,7 +56,7 @@ export const BankUtils = {
       autocomplete: async (interaction: AutocompleteInteraction) => {
         const partialName = interaction.options.getFocused(true).value;
         const suggestions = await BankUtils.suggest(partialName);
-        await interaction.respond(
+        interaction.respond(
           suggestions.map((suggestion: Suggestion) => ({
             name: suggestion.name,
             value: suggestion.value,
@@ -71,7 +71,7 @@ export const BankUtils = {
         ).getString("item");
 
         if (!itemName) {
-          await interaction.reply({
+          interaction.reply({
             content: `No items found matching "${itemName}".`,
             ephemeral: true,
           });
@@ -81,7 +81,7 @@ export const BankUtils = {
         const items = await BankUtils.search(itemName);
 
         if (items.length === 0) {
-          await interaction.reply({
+          interaction.reply({
             content: `No items found matching "${itemName}".`,
             ephemeral: true,
           });
@@ -118,7 +118,7 @@ export const BankUtils = {
         const imageUrl = await getImageUrl(itemName);
 
         if (!imageUrl) {
-          await interaction.reply({
+          interaction.reply({
             content: ':white_check_mark: Item found.',
             embeds: [embed], // Pass the embed in the embeds array
           })
@@ -128,7 +128,7 @@ export const BankUtils = {
         const imageAttachment = new AttachmentBuilder(imageUrl).setName('thumbnail.png');
 
         // Respond to the interaction with the embed and attached image
-        await interaction.reply({
+        interaction.reply({
             content: ':white_check_mark: Item found.',
             embeds: [embed], // Pass the embed in the embeds array
             files: [imageAttachment] // Attach the image file

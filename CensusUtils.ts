@@ -28,15 +28,15 @@ export const CensusUtils = {
 
   // Internal helper functions
   async searchbyToon(toonName: string) {
-    return await this.dbUtils.getRow("active_toons", "name", toonName);
+    return this.dbUtils.getRow("active_toons", "name", toonName);
   },
 
   async searchbyDiscordID(discord_id: string) {
-    return await this.dbUtils.getRows("active_toons", "discord_id", discord_id);
+    return this.dbUtils.getRows("active_toons", "discord_id", discord_id);
   },
 
   async suggest(partialName: string) {
-    return await this.dbUtils.getSuggestions("active_toons", "name", partialName);
+    return this.dbUtils.getSuggestions("active_toons", "name", partialName);
   },
 
   // Command definitions
@@ -57,7 +57,7 @@ export const CensusUtils = {
       autocomplete: async (interaction: AutocompleteInteraction) => {
         const partialName = interaction.options.getFocused(true).value;
         const suggestions = await CensusUtils.suggest(partialName);
-        await interaction.respond(
+        interaction.respond(
           suggestions.map((suggestion: Suggestion) => ({
             name: suggestion.name,
             value: suggestion.value,
@@ -72,7 +72,7 @@ export const CensusUtils = {
         ).getString("toon");
 
         if (!toonName) {
-          await interaction.reply({
+          interaction.reply({
             content: `No toons found matching "${toonName}".`,
             ephemeral: true,
           });
@@ -81,7 +81,7 @@ export const CensusUtils = {
 
         const toon_hit = await CensusUtils.searchbyToon(toonName);
         if (toon_hit.length === 0) {
-          await interaction.reply({
+          interaction.reply({
             content: `No toons found matching "${toonName}".`,
             ephemeral: true,
           });
@@ -108,7 +108,7 @@ export const CensusUtils = {
           table.newRow();
         });
 
-        await interaction.reply({
+        interaction.reply({
           content: `:white_check_mark: <@${discord_id}>'s toons.`,
           embeds: [
             {

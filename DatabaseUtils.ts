@@ -28,7 +28,7 @@ export const DatabaseUtils = {
 
   async executeQuery(db: IDatabase<IMain>, query: string, params: any[]) {
     try {
-      return await db.one(query, params);
+      return db.one(query, params);
     } catch (error) {
       if (
         error instanceof pgPromise.errors.QueryResultError &&
@@ -54,7 +54,7 @@ export const DatabaseUtils = {
     try {
       this.db = this.getDB();
       const query = `SELECT * FROM ${tableName} WHERE ${columnName} = $1`;
-      const result = await db.any(query, value);
+      const result = db.any(query, value);
       return result; // Returning the full result for flexibility
     } catch (error) {
       logger.error(error);
@@ -66,7 +66,7 @@ export const DatabaseUtils = {
     try {
       this.db = this.getDB();
       const query = `SELECT * FROM ${tableName} WHERE ${columnName} = $1`;
-      const result = await db.one(query, value);
+      const result = db.one(query, value);
       return result; // Returning the full result for flexibility
     } catch (error) {
       logger.error(error);
@@ -81,7 +81,7 @@ export const DatabaseUtils = {
       const values = Object.values(row);
       const placeholders = values.map((_, i) => `$${i + 1}`).join(", ");
       const query = `INSERT INTO ${tableName}(${columns}) VALUES(${placeholders}) RETURNING *`;
-      const result = await this.db.one(query, values);
+      const result = this.db.one(query, values);
       return result;
     } catch (error) {
       logger.error(error);
