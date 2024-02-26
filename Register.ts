@@ -1,7 +1,7 @@
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v10';
 import dotenv from "dotenv";
-import { commands } from './CommandRegistry.js';
+import { commandMetadatas } from './CommandRegistry.js';
 import { logger } from './Logger.js';
 
 dotenv.config();
@@ -66,24 +66,24 @@ export async function unregisterSlashCommands() {
 }
 
 export async function registerGuildCommands() {
-  for (const command of commands) {
+  for (const command of commandMetadatas) {
     logger.info(`Registering guild command: ${command.name}`);
   }
   await rest.put(
     Routes.applicationGuildCommands(botSelf, guildId),
-    { body: commands }
+    { body: commandMetadatas }
   );
   logger.info(`Registered guild commands to ${guildId}`);
-  logger.info(`commands: ${commands}`);
+  logger.info(`commands: ${commandMetadatas}`);
 }
 
 export async function registerGlobalCommands() {
-  for (const command of commands) {
+  for (const command of commandMetadatas) {
     logger.info(`Registering global command: ${command.name}`);
   }
   await rest.put(
     Routes.applicationCommands(botSelf),
-    { body: commands }
+    { body: commandMetadatas }
   );
   logger.info('Registered global commands');
 }
