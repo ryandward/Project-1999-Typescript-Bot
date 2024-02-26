@@ -50,19 +50,20 @@ export const BankUtils = {
           description: "The item to search for",
           required: true,
           autocomplete: true,
+          handleAutocomplete: async (interaction: AutocompleteInteraction) => {
+            const partialName = interaction.options.getFocused(true).value;
+            const suggestions = await BankUtils.suggest(partialName);
+            interaction.respond(
+              suggestions.map((suggestion: Suggestion) => ({
+                name: suggestion.name,
+                value: suggestion.value,
+              }))
+            );
+          },
         },
       ],
 
-      autocomplete: async (interaction: AutocompleteInteraction) => {
-        const partialName = interaction.options.getFocused(true).value;
-        const suggestions = await BankUtils.suggest(partialName);
-        interaction.respond(
-          suggestions.map((suggestion: Suggestion) => ({
-            name: suggestion.name,
-            value: suggestion.value,
-          }))
-        );
-      },
+
 
       // Command handlers
       execute: async (interaction: CommandInteraction) => {
