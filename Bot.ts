@@ -1,11 +1,14 @@
 import { Interaction } from "discord.js";
 import { commands } from "./CommandRegistry.js";
 import { logger } from "./Logger.js";
+import { registerGuildCommands } from "./Register.js";
 import { client, initBot } from "./initBot.js";
-
 client.on("ready", () => {
   logger.info(`Logged in as ${client.user?.tag}!`);
 });
+
+initBot();
+
 
 client.on("interactionCreate", async (interaction: Interaction) => {
   if (!interaction.isCommand() && !interaction.isAutocomplete()) return;
@@ -18,18 +21,21 @@ client.on("interactionCreate", async (interaction: Interaction) => {
 
   try {
     if (interaction.isCommand() && command.execute) {
-      command.execute(interaction);
-    } else if (interaction.isAutocomplete() && command.autocomplete) {
-      command.autocomplete(interaction);
+      await command.execute(interaction);
+    } else if (interaction.isAutocomplete()) {
+      const focusedOption = interaction.options.getFocused(true);
+      const option = command.options.find(opt => opt.name === focusedOption.name && opt.autocomplete);
+      if (option && option.handleAutocomplete) {
+        await option.handleAutocomplete(interaction);
+      }
     } else {
-      // This else branch might be redundant if the checks above are comprehensive.
       logger.warn(`Handler found for ${interaction.commandName}, but no matching method to execute.`);
     }
   } catch (error) {
     logger.error(`Error executing command: ${interaction.commandName}: ${(error as Error).message}`, (error as Error).stack);
   }
 });
-// await unregisterSlashCommands();
-// await registerGuildCommands();
 
-initBot();
+// await unregisterSlashCommands();
+await registerGuildCommands();
+
